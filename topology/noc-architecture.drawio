@@ -1,0 +1,16 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram id="noc-cli" name="NOC-Architecture">
+    <mxGraphModel dx="1200" dy="700" grid="1" gridSize="10" page="1" pageWidth="1169" pageHeight="680" background="#ffffff">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="gw" value="Parent: Local Gateway (192.168.1.1 ICMP)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="40" y="120" width="260" height="100" as="geometry"/></mxCell>
+        <mxCell id="ch" value="Children: Quad9 DoT (853), Cloudflare (1.1.1.1), GitHub SSL (443)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1"><mxGeometry x="40" y="320" width="260" height="120" as="geometry"/></mxCell>
+        <mxCell id="eng" value="Python NOC CLI Engine: Prober -&gt; Parent-Child Correlator -&gt; SLA State Machine" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1"><mxGeometry x="410" y="180" width="300" height="200" as="geometry"/></mxCell>
+        <mxCell id="db" value="SQLite Store (noc_state.db) &amp; Shift Handover Markdown" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="820" y="180" width="280" height="200" as="geometry"/></mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="gw" target="eng" style="edgeStyle=orthogonalEdgeStyle;html=1;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="ch" target="eng" style="edgeStyle=orthogonalEdgeStyle;html=1;"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="eng" target="db" style="edgeStyle=orthogonalEdgeStyle;html=1;"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
