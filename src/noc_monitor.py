@@ -410,3 +410,39 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+def render_handover_markdown(conn: sqlite3.Connection, shift_name: str, sla_pct: float) -> str:
+    """Generate a structured Markdown shift-handover report from live SQLite records."""
+    sla = compute_sla_summary(conn, sla_pct)
+    now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ")
+    mtta_str = f"{sla['avg_mtta_sec']}s" if sla["avg_mtta_sec"] is not None else "N/A"
+    mttr_str = f"{sla['avg_mttr_sec']}s" if sla["avg_mttr_sec"] is not None else "N/A"
+
+    latest = conn.execute(
+        """
+        SELECT target_id, resolved_host, state, rtt_ms, cert_days_left, detail
+        FROM probe_samples
+        WHERE id IN (SELECT MAX(id) FROM probe_samples GROUP BY target_id)
+        ORDER BY target_id
+        """
+    ).fetchall()
+
+    lines = [
+        f"# NOC Shift Handover Report — {shift_name}",
+        f"- **Generated (UTC):** {now_iso}",
+        f"- **Observed Availability:** {sla['observed_availability_pct']}% (Target: {sla_pct}%)",
+        f"- **30-Day SLA Error Budget:** {sla['remaining_error_budget_min']} / {sla['monthly_error_budget_min']} min remaining",
+        f"- **Active Incidents:** {sla['active_incidents_count']} | **Resolved:** {sla['resolved_incidents_count']}",
+        f"- **Mean MTTA / MTTR:** {mtta_str} / {mttr_str}",
+        "",
+        "## Latest Target Telemetry",
+        "| Target ID | Host | State | RTT (ms) | TLS Cert (Days) | Detail |",
+        "|---|---|---|---|---|---|",
+    ]
+    for r in latest:
+        rtt_str = f"{r['rtt_ms']}" if r["rtt_ms"] is not None else "-"
+        cert_str = f"{r['cert_days_left']}" if r["cert_days_left"] is not None else "-"
+        lines.append(
+            f"| {r['target_id']} | {r['resolved_host']} | **{r['state']}** | "
+            f"{rtt_str} | {cert_str} | {r['detail']} |"
+        )
+    return "\n".join(lines)
