@@ -1,0 +1,48 @@
+{
+  "sla_target_pct": 99.95,
+  "cert_expiry_warn_days": 14,
+  "targets": [
+    {
+      "id": "lan-default-gw",
+      "name": "Local Default Gateway Router",
+      "host": "auto_default_gateway",
+      "probe_type": "icmp",
+      "parent_id": null,
+      "severity": "P1",
+      "max_rtt_ms": 25.0,
+      "max_loss_pct": 20.0
+    },
+    {
+      "id": "quad9-dot-primary",
+      "name": "Quad9 Encrypted DNS-over-TLS",
+      "host": "9.9.9.9",
+      "port": 853,
+      "sni": "dns.quad9.net",
+      "probe_type": "tls",
+      "parent_id": "lan-default-gw",
+      "severity": "P1",
+      "max_rtt_ms": 350.0
+    },
+    {
+      "id": "cloudflare-anycast-icmp",
+      "name": "Cloudflare Anycast WAN Reachability",
+      "host": "1.1.1.1",
+      "probe_type": "icmp",
+      "parent_id": "lan-default-gw",
+      "severity": "P2",
+      "max_rtt_ms": 120.0,
+      "max_loss_pct": 10.0
+    },
+    {
+      "id": "github-https-edge",
+      "name": "GitHub HTTPS & X.509 Certificate Monitor",
+      "host": "github.com",
+      "port": 443,
+      "sni": "github.com",
+      "probe_type": "tls",
+      "parent_id": "lan-default-gw",
+      "severity": "P2",
+      "max_rtt_ms": 600.0
+    }
+  ]
+}
